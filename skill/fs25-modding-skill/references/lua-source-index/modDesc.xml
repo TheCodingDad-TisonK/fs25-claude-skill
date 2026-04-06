@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="96">
+    <author>Dukefarming</author>
+    <version>1.0.0.0</version>
+    <title>
+        <en>USA Quarterly Taxes</en>
+        <de>USA Quartalssteuern</de>
+        <fr>Taxes trimestrielles USA</fr>
+    </title>
+     <description>
+        <en><![CDATA[
+Applies USA tax brackets to farm income every quarter, adding realism and financial challenge to Farming Simulator 25.
+
+  How to Use:
+  - The mod runs automatically every third in-game period (quarterly). No player input is required.
+  - In multiplayer, taxes are synced across clients,.
+
+  Important Information:
+  - Taxes are deducted from farm balances based on progressive USA tax rates (10% to 37%).
+  - You can see the impact directly in the Finances tab under “Misc.”.
+  - This is a PC-only mod due to custom scripting.
+]]></en>
+        <de><![CDATA[
+Fügt dem Farming Simulator 25 eine realistische Steuerherausforderung hinzu, indem amerikanische Steuerklassen auf das Farmeinkommen jedes Quartals angewendet werden.
+
+  Verwendung:
+  - Das Mod läuft automatisch alle drei Spielperioden (quartalsweise) ohne Eingriff des Spielers.
+  - Im Mehrspielermodus werden Steuern über alle Clients synchronisiert, .
+
+  Wichtige Hinweise:
+  - Steuern werden basierend auf progressiven US-Steuersätzen (10% bis 37%) vom Farmguthaben abgezogen.
+  - Die Auswirkungen sind direkt im Finanzbildschirm unter „Sonstiges“ sichtbar..
+  - Dieses Mod ist aufgrund benutzerdefinierter Skripte nur für PC verfügbar.
+]]></de>
+        <fr><![CDATA[
+Applique les tranches d'imposition américaines aux revenus de la ferme chaque trimestre, ajoutant du réalisme et un défi financier à Farming Simulator 25.
+
+  Comment l'utiliser :
+  - Le mod fonctionne automatiquement tous les trois périodes de jeu (trimestriel). Aucune intervention du joueur n'est requise.
+  - En mode multijoueur, les taxes sont synchronisées entre les clients, et les joueurs voient une fenêtre contextuelle si leur ferme est imposée.
+
+  Informations importantes :
+  - Les taxes sont déduites des soldes de la ferme en fonction des taux d'imposition progressifs des États-Unis (de 10 % à 37 %).
+  - Consultez le journal de jeu pour les détails des taxes (par exemple, "Ferme 1 a payé 2066 $").
+  - Ce mod est uniquement pour PC en raison de scripts personnalisés.
+]]></fr>
+    </description>
+    <iconFilename>icon_TaxesMod.dds</iconFilename>
+    <multiplayer supported="true"/>
+    <extraSourceFiles>
+        <sourceFile filename="TaxesMod.lua" />
+    </extraSourceFiles>
+</modDesc>

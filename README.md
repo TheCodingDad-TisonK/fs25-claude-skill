@@ -26,10 +26,10 @@ This is a **Claude Skill** — a modular, self-contained knowledge package that 
 ### The Knowledge Base At A Glance
 | Resource | Content | Coverage |
 |----------|---------|----------|
-| **LUADOC** | 1,661 Documentation Pages | 11,102+ Script Functions |
-| **Source** | 267 Giants Lua Files | Internal Engine Implementation |
-| **Patterns** | 30+ Validated Templates | GUI, Events, Save/Load, Vehicles |
-| **Pitfalls** | 17+ Critical "Crash Traps" | os.time(), DialogElement, goto |
+| **LUADOC** | 1,661 Documentation Pages | 11,102+ Script Functions — fetched live via WebFetch |
+| **Source** | 267 Giants Lua Files | Internal Engine Implementation — fetched live via WebFetch |
+| **Patterns** | 30+ Validated Templates | GUI, Events, Save/Load, Vehicles, HUD, Field Detection |
+| **Pitfalls** | 20+ Critical "Crash Traps" | os.time(), DialogElement, goto, hook accumulation, mouseEvent |
 
 ---
 
@@ -39,7 +39,8 @@ Ask Claude (or me!) anything about FS25 modding:
 
 > 🎩 *"Claude, I need a multiplayer-safe event that syncs a custom 'damageLevel' variable."*  
 > 🚀 *"Samantha, what's the correct directory structure for a vehicle specialization mod?"*  
-> 🚜 *"How do I create a custom Yes/No dialog that actually works in FS25?"*
+> 🚜 *"How do I create a custom Yes/No dialog that actually works in FS25?"*  
+> 🌾 *"What field is the player currently standing in, and how do I detect it reliably?"*
 
 ---
 
@@ -51,6 +52,7 @@ This skill enforces strict adherence to FS25's unique environment:
 2. **Bottom-Left Origin**: GUI coordinates (0,0) are at the bottom-left, not top-left.
 3. **Manager Safety**: Always nil-check `g_financeManager`, `g_server`, and `g_client`.
 4. **Base Classes**: Use `MessageDialog`, NOT `DialogElement` (it causes white-box rendering crashes).
+5. **Hook Cleanup**: Always restore `appendedFunction` hooks on mod unload — they stack on savegame reload.
 
 ---
 
@@ -60,12 +62,13 @@ This skill enforces strict adherence to FS25's unique environment:
 Grab the latest `.skill` file from the [Releases](https://github.com/TheCodingDad-TisonK/fs25-claude-skill/releases) page.
 
 ### 2. Location
-Place the `fs25-modding-skill.skill` file in your project root or your Claude skills folder:
+Place the `fs25-modding-skill.skill` file in your Claude skills folder:
 - **Windows**: `%APPDATA%\Claude\skills\`
-- **Project**: `/YourModProject/fs25-modding-skill.skill`
+- **Mac/Linux**: `~/.claude/skills/`
+- **Project-level**: Drop it in your mod project root
 
 ### 3. Activate
-Restart your Claude session and ask: *"What FS25 modding skills do you have?"*
+Restart your Claude session. The skill activates automatically whenever you mention "FS25", "Farming Simulator", paste Lua mod code, or reference Giants Engine APIs.
 
 ---
 
@@ -75,27 +78,32 @@ This skill stands on the shoulders of the community's hardest workers:
 
 ### 1. FS25 Community LUADOC
 Provided by [@umbraprior](https://github.com/umbraprior). Complete API coverage from Engine to Script.
-- Found in: `skill/fs25-modding-skill/references/luadoc-index/`
+- 1,661 pages · 11,102+ documented functions
+- **How it works**: The skill indexes all paths locally; Claude uses **WebFetch** to retrieve full docs on demand — no local install required.
+- Repo: [umbraprior/FS25-Community-LUADOC](https://github.com/umbraprior/FS25-Community-LUADOC)
 
 ### 2. FS25 Lua Scripting (Source Archive)
 Provided by [@Dukefarming](https://github.com/Dukefarming). The actual Giants source code (dataS) for reference.
-- Found in: `skill/fs25-modding-skill/references/lua-source-index/`
+- 267 Lua files — understand how Giants implements things internally
+- **How it works**: Same WebFetch-on-demand pattern as the LUADOC.
+- Repo: [Dukefarming/FS25-lua-scripting](https://github.com/Dukefarming/FS25-lua-scripting)
 
 ### 3. FS25 AI Coding Reference (Patterns)
 Provided by [@XelaNull](https://github.com/XelaNull) (FS25_UsedPlus). Battle-tested patterns validated against an 83-file production mod with 30+ custom dialogs.
-- Source: [XelaNull/FS25_UsedPlus/FS25_AI_Coding_Reference](https://github.com/XelaNull/FS25_UsedPlus/tree/master/FS25_AI_Coding_Reference)
-- Found in: `skill/fs25-modding-skill/references/patterns/`, `references/basics/`, `references/advanced/`, `references/pitfalls/`
+- Bundled directly in the skill — works offline, no fetching needed.
+- Repo: [XelaNull/FS25_UsedPlus/FS25_AI_Coding_Reference](https://github.com/XelaNull/FS25_UsedPlus/tree/master/FS25_AI_Coding_Reference)
 
 ---
 
 ## 🗺️ Roadmap & Community
 
-We're just getting started. Join the effort!
+We're building this together. Join the effort!
 
-- [x] **v1.0.0** — Initial Release with full 3-way knowledge integration.
-- [ ] **v1.1.0** — Giants SDK Official Docs Indexing.
-- [ ] **v1.2.0** — `modDesc.xml` Schema Validation Helpers.
-- [ ] **v2.0.0** — Specialized Sub-Skills (e.g., "The GUI Expert", "The Vehicle Architect").
+- [x] **v1.0.0** — Initial release with full 3-way knowledge integration
+- [x] **v1.1.0** — WebFetch live lookups (LUADOC + source, no local files needed), field detection pattern, 3 new pitfalls, proper attribution
+- [ ] **v1.2.0** — `modDesc.xml` schema validation helpers
+- [ ] **v1.3.0** — Top 20 community mods indexed as pattern sources
+- [ ] **v2.0.0** — Specialized sub-skills (e.g., "The GUI Expert", "The Vehicle Architect")
 
 ### Contributing
 Found a new pitfall? Have a pattern that's better than ours? 🎩 Claude and 🚀 Samantha love pull requests! See [CONTRIBUTING.md](CONTRIBUTING.md).

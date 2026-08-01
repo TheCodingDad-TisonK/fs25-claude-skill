@@ -80,20 +80,33 @@ end
 ## Available MessageTypes
 
 ```lua
--- Time events
-MessageType.MINUTE_CHANGED       -- Every in-game minute
-MessageType.HOUR_CHANGED         -- Every in-game hour
-MessageType.DAY_CHANGED          -- Every day at midnight
-MessageType.PERIOD_CHANGED       -- Season change
-MessageType.YEAR_CHANGED         -- New year
+-- Time events                   (callback args in parentheses)
+MessageType.MINUTE_CHANGED       -- (currentMinute)
+MessageType.HOUR_CHANGED         -- (currentHour)
+MessageType.DAY_CHANGED          -- (currentDay)
+MessageType.PERIOD_CHANGED       -- (currentPeriod, currentVisualPeriod) — a PERIOD IS A MONTH
+MessageType.SEASON_CHANGED       -- (currentSeason) — this is the season change
+MessageType.YEAR_CHANGED         -- (currentYear)
 
 -- Economy events
-MessageType.MONEY_CHANGED        -- When farm money changes
+MessageType.MONEY_CHANGED        -- (farmId, money)
 MessageType.FARM_PROPERTY_CHANGED -- Farm property purchased/sold
 
 -- Game events
-MessageType.SETTING_CHANGED      -- Game setting changed
+MessageType.SETTING_CHANGED      -- a TABLE, indexed by setting name (see below)
 ```
+
+> ⚠️ **`PERIOD_CHANGED` is not the season change.** They are separate messages,
+> published on adjacent lines of `environment/Environment.lua` (~414 / ~417). Earlier
+> versions of this doc conflated them.
+
+> ⚠️ **`SETTING_CHANGED` is a table, not a constant.** The game publishes
+> `MessageType.SETTING_CHANGED[name]`, so subscribe with
+> `MessageType.SETTING_CHANGED[GameSettings.SETTING.XXX]`.
+
+**There are 119 MessageType constants in total** — see
+`references/giants-source/MESSAGE-TYPES.md` for the complete list with verified
+payloads.
 
 ---
 

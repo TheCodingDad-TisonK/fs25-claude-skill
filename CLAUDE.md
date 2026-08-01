@@ -9,17 +9,27 @@
 ## Technical Mandates
 
 - **FS25 Context**: Always prioritize the knowledge in `skill/fs25-modding-skill/`.
-- **Lua Standards**: FS25 uses Lua 5.1 (sandboxed). No `os.time()`, no `goto`, no `table.pack()`.
-- **GUI Origin**: Bottom-left (0,0). High Y = top of screen.
+- **Source first**: The decompiled engine corpus (`$FS25_DECODED`, default
+  `D:\FS25_Decoded\dataS\scripts_decompiled`) outranks all documentation. Grep it and
+  cite `path:line`. Only fall back to vendored source / LUADOC when it is unavailable,
+  and say so.
+- **`descVersion` must be 90–111** (`main.lua:29-30`). Use `104`. Outside the range the
+  game refuses to load the mod before any script runs.
+- **Lua Standards**: Sandboxed. No `os.time()` (zero `os.*` in the engine), no `goto`,
+  no `table.move()`.
+- **GUI geometry**: 1920×1080 reference (`main.lua:91-92`); `Npx` / `Ndp` / normalized.
+- **Decompiled caveat**: local variable names in the corpus are unreliable. Never report
+  a base-game defect on the strength of one — see `references/giants-source/DECOMPILED-CAVEATS.md`.
 - **Tooling**: Use `skill/package_skill.py` for creating `.skill` files. Run via `py` on Windows, `python3` on Mac/Linux.
 - **Hook Safety**: Any `Utils.appendedFunction` or `Utils.prependedFunction` hook installed at load time MUST be restored in the delete/unload path — otherwise it stacks on savegame reload.
 
 ---
 
-## The Three Knowledge Sources
+## The Knowledge Sources
 
 | Source | Author | Location in skill | How to access |
 |--------|--------|-------------------|---------------|
+| **Decompiled engine corpus** (rank 1) | Giants (local decompile) | `$FS25_DECODED/dataS/scripts_decompiled` + extracted facts in `references/giants-source/` | Grep locally; extracted facts always bundled |
 | FS25 AI Coding Reference | [@XelaNull](https://github.com/XelaNull) | `references/patterns/`, `references/basics/`, `references/advanced/`, `references/pitfalls/` | Read directly — bundled locally |
 | FS25 Community LUADOC | [@umbraprior](https://github.com/umbraprior) | `references/luadoc-index/LUADOC-INDEX.md` | Index locally; use **WebFetch** for full docs |
 | FS25 Lua Scripting | [@Dukefarming](https://github.com/Dukefarming) | `references/lua-source-index/LUA-SOURCE-INDEX.md` | Index locally; use **WebFetch** for source files |
@@ -41,10 +51,16 @@
 
 ### Research Order (mandatory)
 Before writing any FS25 Lua API call:
-1. Check `references/luadoc-index/LUADOC-INDEX.md` for the class/method path
-2. WebFetch the full doc to confirm the exact signature
-3. Cross-reference with `references/lua-source-index/LUA-SOURCE-INDEX.md` if you need Giants' implementation
-4. Never guess — if it's not in the references, say so
+1. **Grep the decompiled corpus** (`$FS25_DECODED/dataS/scripts_decompiled`). Find the
+   class in `references/giants-source/CLASS-INDEX.md`, then read the file. Cite
+   `path:line`. Recipes: `references/giants-source/GREP-RECIPES.md`
+2. Check the already-extracted facts in `references/giants-source/` — classes,
+   MessageTypes, globals, sandbox rules — these need no local corpus
+3. If the corpus is unavailable, search the vendored `references/lua-source-index/`
+   and `references/luadoc-index/`, and label the answer **doc-grade**
+4. WebFetch upstream docs only as a last resort
+5. Never guess. A signature you have read beats a signature you remember. If it is in
+   none of the above, say so explicitly.
 
 ### Validation
 - Verify patterns against `references/pitfalls/what-doesnt-work.md`

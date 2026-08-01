@@ -80,6 +80,12 @@ local id = string.format("ITEM_D%d_%08d", currentDay, self.nextId)
 
 **Error:** `Lua compiler error: Incomplete statement: expected assignment or a function call`
 
+> 🛑 **Do not "correct" this rule from the decompiled source.** The decompiled corpus
+> contains 180 `goto` statements — but as auto-numbered labels (`goto l19`, `::l12::`),
+> which is the *decompiler's* rendering of loops and early exits, not authored Giants
+> code. The rule above stands on stronger evidence: a real compiler error from a real
+> mod. See `references/giants-source/DECOMPILED-CAVEATS.md`.
+
 **Symptoms:**
 - Mod fails to load entirely
 - All vehicle specializations using your mod fail with "unknown specialization"

@@ -36,7 +36,7 @@ jobs:
           name: FS25 Claude Skill ${{ steps.version.outputs.VERSION }}
           body_path: CHANGELOG.md
           files: |
-            skill/fs25-modding.skill
+            skill/fs25-modding-skill.skill
           draft: false
           prerelease: false
         env:

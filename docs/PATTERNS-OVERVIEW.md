@@ -8,7 +8,7 @@ High-level overview of all patterns bundled in the skill. For full details, read
 
 ### modDesc.xml Structure
 Every FS25 mod needs a valid `modDesc.xml`. Key elements:
-- `descVersion="83"` (FS25 current)
+- `descVersion="104"` (valid range is **90–111**, enforced by `mods.lua`)
 - `<extraSourceFiles>` for Lua files
 - `<vehicleTypes>` for custom vehicles
 - `<l10n>` for translations
@@ -191,7 +191,7 @@ Collision triggers with enter/leave callbacks:
 Custom overlay HUD elements:
 - Extend `HUDDisplayElement`
 - Use `createOverlay()`, `setOverlayColor()`, `renderOverlay()`
-- Coordinate system: bottom-left origin, normalized units
+- Coordinate system: 1920x1080 reference; values may be `Npx`, `Ndp`, or normalized 0-1
 - **mouseEvent handlers must return `true` when consuming clicks** — or they fall through to the game world
 
 → Full doc: `references/advanced/hud-framework.md`

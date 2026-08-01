@@ -9,6 +9,11 @@ on:
 jobs:
   package:
     runs-on: ubuntu-latest
+
+    # The repo's default workflow token is read-only, so creating a release
+    # returned 403 and every release run failed (v1.0.0, v1.1.0, v2.0.0).
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout

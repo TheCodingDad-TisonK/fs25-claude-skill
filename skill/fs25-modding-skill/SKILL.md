@@ -198,7 +198,7 @@ an error plus callstack — typos are loud.
 | `g_gui:showYesNoDialog()` | `YesNoDialog.show(...)` | 0 hits corpus-wide |
 | `os.time()` | `g_currentMission.time` | no `os.*` anywhere |
 | `goto` / `::label::` | `if/else`, `break` | real compiler error (not from corpus — see caveats) |
-| `table.move()` / `table.pack()` | manual loop / `{...}` | 0 hits / 3 hits |
+| `table.move()` | manual loop | 0 hits corpus-wide |
 | `DialogElement` for a message dialog | `MessageDialog` | `MessageDialog` *extends* `DialogElement` |
 | `SliderElement` for a settings option | `MultiTextOptionElement` | what the settings screens use |
 

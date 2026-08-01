@@ -57,14 +57,38 @@ reference, then aspect-scaled by `g_aspectScaleX/Y`), `Ndp` (actual display pixe
 against `g_screenWidth/Height`), and bare numbers (already normalized 0–1). Convert
 with `GuiUtils.getNormalizedScreenValues(values, default)`.
 
-### 4. "`Slider` widget — unreliable, never use"
+### 4. "`table.pack()` is not available" — unsupported, and contradicted
+
+v1's fact table listed `table.pack()` as unavailable, alongside `table.move()`. Unlike
+the `goto` rule, **no validation evidence was ever recorded for it** — it appears in no
+pitfalls entry and cites no compiler error. The corpus contradicts it: base-game code
+uses `table.pack` in three places that read as genuine authored source, not artifacts.
+
+```lua
+-- collections/ObjectPool.lua:13
+self.objectConstructorArguments = table.pack(...)
+-- utils/TargetedFunction.lua:8
+self.arguments = table.pack(...)
+-- utils/TargetedFunction.lua:23
+return table.unpack(table.getListUnion(self.arguments, table.pack(...)))
+```
+
+**The claim has been dropped rather than reversed.** Three call sites prove the engine's
+own Lua accepts it; they do not prove the mod sandbox does, and no one has tested that.
+If you need varargs, `{...}` is universally safe and costs nothing — prefer it. By
+contrast `table.move()` genuinely has **0 hits** and should be avoided.
+
+*(Style note: bare `unpack` is used 566 times vs `table.unpack` 3 times. Match the
+base game and use `unpack`.)*
+
+### 5. "`Slider` widget — unreliable, never use"
 
 Both `gui/elements/SliderElement.lua` and `gui/elements/OptionSliderElement.lua` exist
 and are used by the base game. The useful version of this advice: **for a discrete
 settings option use `MultiTextOptionElement`** (that is what the settings screens use);
 `SliderElement` backs scrollbars. "Slider does not work" is too strong.
 
-### 5. "`DialogElement` as a base class is wrong"
+### 6. "`DialogElement` as a base class is wrong"
 
 `DialogElement` is real and is the **parent of** `MessageDialog`:
 

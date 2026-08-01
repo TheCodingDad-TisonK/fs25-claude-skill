@@ -257,7 +257,7 @@ v1.0.0.0 - Initial release
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
-| `descVersion` | `104` | FS25 schema version |
+| `descVersion` | `90`–`111` (use `104`) | FS25 schema version. Range enforced by the game — see below. |
 | `multiplayer supported` | `true`/`false` | MP compatibility |
 | `axisType` | `HALF`/`FULL` | Input axis type |
 | `ignoreComboMask` | `true`/`false` | Allow in combo |
@@ -268,7 +268,25 @@ v1.0.0.0 - Initial release
 ## Common Pitfalls
 
 ### 1. Wrong descVersion
-- FS25 uses `descVersion="104"` (some mods use 96, but 104 is current)
+**The accepted range is 90–111, verified in source:**
+
+```lua
+-- main.lua:29-30
+g_minModDescVersion = 90
+g_maxModDescVersion = 111
+```
+
+`mods.lua` rejects anything outside it before your scripts ever load:
+
+```lua
+if revisionStr < g_minModDescVersion or g_maxModDescVersion < revisionStr then
+    printError("Error: Unsupported mod description version in mod " .. modName)
+```
+
+- Use `descVersion="104"` unless you need a newer schema feature.
+- Anything below `90` (e.g. a leftover FS22-era `83`) makes the mod **fail to load
+  entirely**, with only that one line in `log.txt` to explain it.
+- If a mod silently does not appear in the mod list, check this first.
 
 ### 2. Missing Icon
 - Always include `icon.dds` (256x256 DDS file)

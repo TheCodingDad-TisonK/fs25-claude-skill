@@ -19,7 +19,7 @@ Claude will use the skill to generate a complete working scaffold.
 ### Step 2 — Let Claude generate the structure
 
 With the skill installed, Claude will produce:
-- `modDesc.xml` with correct `descVersion="83"`
+- `modDesc.xml` with a valid `descVersion` (must be **90–111**; use `104`)
 - `scripts/MyMod.lua` with proper class structure
 - `gui/MyDialog.xml` with the dialog layout
 - `gui/MyDialog.lua` with `MessageDialog` base class

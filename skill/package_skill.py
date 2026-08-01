@@ -6,7 +6,7 @@ Usage:
     python package_skill.py fs25-modding-skill/
     python package_skill.py fs25-modding-skill/ --output ../releases/
 
-Output: fs25-modding.skill (a zip file Claude can load)
+Output: fs25-modding-skill.skill (a zip file Claude can load)
 """
 
 import argparse
@@ -14,6 +14,15 @@ import os
 import sys
 import zipfile
 from pathlib import Path
+
+# Windows consoles default to cp1252, which cannot encode the status emoji below.
+# Without this the script raises UnicodeEncodeError *after* writing a perfectly good
+# zip, exits non-zero, and fails the release workflow. Degrade instead of dying.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
 
 
 def package_skill(skill_dir: str, output_dir: str = ".") -> Path:

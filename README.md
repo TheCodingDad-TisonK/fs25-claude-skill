@@ -26,10 +26,18 @@ This is a **Claude Skill** — a modular, self-contained knowledge package that 
 ### The Knowledge Base At A Glance
 | Resource | Content | Coverage |
 |----------|---------|----------|
-| **LUADOC** | 1,661 Documentation Pages | 11,102+ Script Functions — fetched live via WebFetch |
-| **Source** | 267 Giants Lua Files | Internal Engine Implementation — fetched live via WebFetch |
+| **Engine Source** 🆕 | 1,413 classes · 119 MessageTypes · 392 globals | Extracted from the **full decompiled `dataS/scripts`** — 1,842 files, ~411k lines |
+| **Game Data** 🆕 | 5,763 l10n keys · 512 GUI profiles · 254 input actions | Legal values straight from the shipped `dataS` XML |
+| **LUADOC** | 1,661 Documentation Pages | 11,102+ Script Functions — bundled index + WebFetch |
+| **Source Archive** | 267 Giants Lua Files | Internal engine implementation, vendored |
 | **Patterns** | 30+ Validated Templates | GUI, Events, Save/Load, Vehicles, HUD, Field Detection |
 | **Pitfalls** | 20+ Critical "Crash Traps" | os.time(), DialogElement, goto, hook accumulation, mouseEvent |
+
+> **v2.0.0 is the source-verified release.** Every "critical fact" from v1 was re-checked
+> against the game's own decompiled engine code. Several did not survive — including a
+> `modDesc` template that produced mods the game silently refuses to load. See
+> [CHANGELOG.md](CHANGELOG.md) and `references/giants-source/VERIFIED-FACTS.md` for the
+> full audit trail with `path:line` citations.
 
 ---
 
@@ -46,13 +54,26 @@ Ask Claude (or me!) anything about FS25 modding:
 
 ## 🔧 Technical Mandates (The "Ground Truth")
 
-This skill enforces strict adherence to FS25's unique environment:
+This skill enforces strict adherence to FS25's unique environment. Each mandate below
+is verified against the decompiled engine source:
 
-1. **Sandboxed Lua 5.1**: No `os.time()`, no `goto`, no `table.pack()`.
-2. **Bottom-Left Origin**: GUI coordinates (0,0) are at the bottom-left, not top-left.
-3. **Manager Safety**: Always nil-check `g_financeManager`, `g_server`, and `g_client`.
-4. **Base Classes**: Use `MessageDialog`, NOT `DialogElement` (it causes white-box rendering crashes).
-5. **Hook Cleanup**: Always restore `appendedFunction` hooks on mod unload — they stack on savegame reload.
+1. **`descVersion` must be 90–111** — `main.lua:29-30`. Outside that range `mods.lua`
+   rejects the mod *before your scripts load* and it never appears in the mod list.
+   Use `104`. ⚠️ *v1 of this skill shipped a template with `83`.*
+2. **Sandboxed Lua**: No `os.time()` (zero `os.*` references in 411k lines of engine
+   code), no `goto`, no `table.move()`.
+3. **The mod sandbox rewrites your environment**: your globals are private to your mod,
+   `g_i18n` is swapped for a mod-scoped instance, and `InitEventClass` /
+   `InitObjectClass` / `addSpecialization` **auto-prefix with your mod name** — pass the
+   short name or you get `MyMod.MyMod.MyEvent`.
+4. **GUI geometry** is against a **1920×1080 reference** (`main.lua:91-92`); values may
+   be `Npx`, `Ndp`, or normalized 0–1.
+5. **Manager Safety**: Always nil-check `g_server` (it is `nil` on a pure client) and
+   `g_client` (`nil` on a dedicated server).
+6. **Base Classes**: Extend `MessageDialog` for message-style dialogs — it already
+   extends `DialogElement` and gives you the open/close lifecycle.
+7. **Hook Cleanup**: Always restore `appendedFunction` hooks on mod unload — they stack
+   on savegame reload. Same for `g_messageCenter:unsubscribeAll(self)`.
 
 ---
 
@@ -75,6 +96,24 @@ Restart your Claude session. The skill activates automatically whenever you ment
 ## 📚 Deep Dive: Knowledge Sources
 
 This skill stands on the shoulders of the community's hardest workers:
+
+### 0. Decompiled Engine Source (rank 1) 🆕 in v2.0.0
+The complete `dataS/scripts` corpus — 1,842 Lua files, ~411,000 lines — decompiled from
+your own game install. This outranks every other source, because the others are partial:
+the vendored archive is a 267-file subset, and the LUADOC has no page at all for several
+load-bearing classes (`Farm`, `HusbandrySystem`, `Storage`, `BaseMission`).
+
+- **How it works**: point `$FS25_DECODED` at your decompiled `dataS` (default
+  `D:\FS25_Decoded`). Claude greps it directly and cites `path:line`.
+- **You do not need it to use this skill.** Everything already extracted —
+  1,413 classes, 119 MessageTypes, the globals table, the mod sandbox rules, the
+  corrections — is committed under `references/giants-source/` and ships in the
+  `.skill` package. Without a local copy Claude falls back to the vendored source and
+  LUADOC and labels those answers doc-grade.
+- **Nothing from your game is redistributed here** — the committed files hold derived
+  metadata (names, paths, counts, signatures) and short excerpts quoted for commentary.
+- ⚠️ Decompiled output has artifacts. **Local variable names are unreliable** — see
+  `references/giants-source/DECOMPILED-CAVEATS.md` before reporting an engine "bug".
 
 ### 1. FS25 Community LUADOC
 Provided by [@umbraprior](https://github.com/umbraprior). Complete API coverage from Engine to Script.
@@ -101,9 +140,12 @@ We're building this together. Join the effort!
 
 - [x] **v1.0.0** — Initial release with full 3-way knowledge integration
 - [x] **v1.1.0** — WebFetch live lookups (LUADOC + source, no local files needed), field detection pattern, 3 new pitfalls, proper attribution
-- [ ] **v1.2.0** — `modDesc.xml` schema validation helpers
-- [ ] **v1.3.0** — Top 20 community mods indexed as pattern sources
-- [ ] **v2.0.0** — Specialized sub-skills (e.g., "The GUI Expert", "The Vehicle Architect")
+- [x] **v2.0.0** — **Source-verified rebuild.** Decompiled engine corpus as rank-1
+      authority; class/MessageType/globals indexes; mod sandbox documented; 6 v1 facts
+      corrected; release pipeline fixed
+- [ ] **v2.1.0** — Specialized sub-skills (e.g., "The GUI Expert", "The Vehicle Architect")
+- [ ] **v2.2.0** — `modDesc.xml` schema validation helpers
+- [ ] **v2.3.0** — Top 20 community mods indexed as pattern sources
 
 ### Contributing
 Found a new pitfall? Have a pattern that's better than ours? 🎩 Claude and 🚀 Samantha love pull requests! See [CONTRIBUTING.md](CONTRIBUTING.md).
